@@ -1,13 +1,13 @@
 import torch
 from torch import nn
-from torchvision.models.vgg import vgg16
-
+from loss_selector import loss_selector
 
 class GeneratorLoss(nn.Module):
-    def __init__(self):
+    def __init__(self,loss_net):
         super(GeneratorLoss, self).__init__()
-        vgg = vgg16(pretrained=True)
-        loss_network = nn.Sequential(*list(vgg.features)[:31]).eval()
+        #vgg = vgg16(pretrained=True)
+        #loss_network = nn.Sequential(*list(vgg.features)[:31]).eval()
+        loss_network=loss_selector(loss_net)
         for param in loss_network.parameters():
             param.requires_grad = False
         self.loss_network = loss_network

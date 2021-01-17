@@ -20,7 +20,7 @@ parser.add_argument('--crop_size', default=88, type=int, help='training images c
 parser.add_argument('--upscale_factor', default=4, type=int, choices=[2, 4, 8],
                     help='super resolution upscale factor')
 parser.add_argument('--num_epochs', default=100, type=int, help='train epoch number')
-
+parser.add_argument('--loss_net', default="vgg16", type=string, help='choose network for loss')
 
 if __name__ == '__main__':
     opt = parser.parse_args()
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     netD = Discriminator()
     print('# discriminator parameters:', sum(param.numel() for param in netD.parameters()))
     
-    generator_criterion = GeneratorLoss()
+    generator_criterion = GeneratorLoss(opt.loss_net)
     
     if torch.cuda.is_available():
         netG.cuda()
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     for epoch in range(1, NUM_EPOCHS + 1):
         train_bar = tqdm(train_loader)
         running_results = {'batch_sizes': 0, 'd_loss': 0, 'g_loss': 0, 'd_score': 0, 'g_score': 0}
-    
+        
         netG.train()
         netD.train()
         for data, target in train_bar:
